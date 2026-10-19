@@ -107,7 +107,7 @@ class c
         (preproc_endif)))))
 
 ================================================================================
-FTEQCC QCC_PR_SkipToEndOfLine: a directive continues past an escaped line break
+FTEF-14.2: a directive continues past an escaped line break
 ================================================================================
 
 #define TWO(a) \
@@ -128,7 +128,7 @@ float b;
       name: (identifier))))
 
 ================================================================================
-FTEQCC QCC_PR_LexPunctuation: a \ before a line break is skipped
+FTEF-13.2: a \ before a line break is skipped
 ================================================================================
 
 void() f = { g(a, \
@@ -152,7 +152,7 @@ void() f = { g(a, \
               (identifier))))))))
 
 ================================================================================
-Leniency: a name or a call with no ; is a macro invocation
+QC-9.4 (leniency): a name or a call with no ; is a macro invocation
 ================================================================================
 
 void() f = {
@@ -208,7 +208,7 @@ class d
             name: (identifier)))))))
 
 ================================================================================
-Leniency: a macro invocation is never the body of an if
+QC-9.4 (leniency): a macro invocation is never the body of an if
 ================================================================================
 
 void() f = { if (a) b(); else if (c) d(); else e(); };
