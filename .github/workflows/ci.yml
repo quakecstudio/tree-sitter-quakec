@@ -22,6 +22,7 @@ jobs:
   test:
     name: tree-sitter test
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     permissions:
       contents: read
     steps:
