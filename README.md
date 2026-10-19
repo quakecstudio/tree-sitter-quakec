@@ -46,35 +46,6 @@ The operators keep qcc's priorities, extended with FTEQCC's default table (FTE-1
 the compound assignments share the priority of `=`, and unary `-`, `+`, `&`, `*` and the casts
 take a term.
 
-### Constructs without a spec statement
-
-The corpus uses some FTEQCC constructs that no statement in the three specifications names
-yet. The grammar follows FTEQCC's source for them, and each test in
-`test/corpus/fteqcc-unspecified.txt` is titled with the FTEQCC function it follows. Adding
-their statements to the editor's specifications is plan item P2-36.
-
-- Any expression as a global initialiser (`float IT_ALL = IT_AXE | IT_SHOTGUN;`) and a function
-  body inside a function body (`QCC_PR_ParseInitializerType`).
-- An expression as a state's frame (`QCC_PR_ParseState`).
-- Unnamed parameters, `void` for no parameters, and the `optional`, `inout`, `out` and `in`
-  parameter words (`QCC_PR_ParseFunctionType`).
-- A function type that returns a function, and a `*` before a later name in a declaration
-  (`QCC_PR_ParseDefs`).
-- Escapes beyond FTE-20.3 (`\b`, `\x41` and the rest), and adjacent string literals as one
-  constant (`QCC_PR_LexString`).
-- Character constants `'a'` and two-component vectors `'1 2'` (`QCC_PR_LexVector`).
-- Calling a call's result, and reading a field of it (`QCC_PR_RefExpression`).
-- A frame reference that stops at `(`, `)`, `&`, `|` and `]` (`QCC_PR_LexMacroName`), and
-  `$framesave` (`QCC_PR_LexGrab`).
-- The comma operator in a statement, labels and `goto`, `return =`, `if !`, `if not`,
-  `until`, `case a .. b` and `?:` with no middle (`QCC_PR_ParseStatement`), and a `for` whose
-  `init` mixes expressions and declarations (`QCC_PR_ParseStatement_For`).
-- `sizeof` (`QCC_PR_RefTerm`), `[x, y, z]` vectors and `::name` (`QCC_PR_ParseRefValue`), and
-  designated initialisers (`QCC_PR_ParseInitializerType`).
-- A keyword written with two leading underscores, `__const` (`QCC_PR_CheckKeyword`).
-- A `\` before a line break, which `QCC_PR_LexPunctuation` skips, and a directive continued
-  past one (`QCC_PR_SkipToEndOfLine`).
-
 ### Where it differs from the compilers
 
 A highlighter has to accept a file while it is being typed, does not expand macros and does

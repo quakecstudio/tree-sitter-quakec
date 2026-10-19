@@ -8,10 +8,9 @@
  * from id's qcc at id-Software/Quake-Tools@c0d1b91c74eb654365ac7755bc837e497caaca73. The
  * FTEQCC rules follow docs/spec/dialect-fteqcc-rerelease.md (prefix FTE) and
  * docs/spec/dialect-fteqcc.md (prefix FTEF), written from FTEQCC at
- * fte-team/fteqw@f937b9d88f71fc4429db5fe56c6a98d922711b2e. A rule for a construct those specs
- * do not yet state names the FTEQCC function it follows instead (README.md, "Constructs
- * without a spec statement"). Comments name the statement each rule implements; README.md
- * lists where the grammar is more lenient than either compiler.
+ * fte-team/fteqw@f937b9d88f71fc4429db5fe56c6a98d922711b2e. Comments name the statement each
+ * rule implements, or the FTEQCC function its statement quotes; README.md lists where the
+ * grammar is more lenient than either compiler.
  *
  * One grammar covers both dialects, as a highlighter cannot know which compiler a file is
  * for: where FTEQCC accepts what qcc rejects, the grammar accepts it.
@@ -749,7 +748,7 @@ module.exports = grammar({
     // constant.
     char_literal: _ => token(seq('\'', choice(/[^\\'\n]/, /\\[^\n]/, /\\x[0-9a-fA-F]+/), '\'')),
 
-    // QC-6.1 to QC-6.3: no line break inside. FTE-20.3 adds C's one-byte escapes; FTEQCC
+    // QC-6.1 to QC-6.3: no line break inside. FTE-20.4 adds C's one-byte escapes; FTEQCC
     // also has its markup escapes, `\x` and `\u` (qcc_pr_lex.c, QCC_PR_LexString and
     // QCC_PR_LexEscapedCodepoint), so any escape is taken.
     string_literal: $ => seq(
