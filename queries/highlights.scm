@@ -10,7 +10,7 @@
   (#match? @constant "^[A-Z][A-Z0-9_]*$"))
 
 ((identifier) @variable.builtin
-  (#any-of? @variable.builtin "self" "other" "world"))
+  (#any-of? @variable.builtin "self" "other" "world" "this" "super"))
 
 ; Keywords and types
 
@@ -21,30 +21,110 @@
   "else"
   "while"
   "do"
+  ; FTEQCC
+  "for"
+  "switch"
+  "case"
+  "default"
+  "break"
+  "continue"
+  "goto"
+  "until"
+  "not"
+  "sizeof"
+  "struct"
+  "union"
+  "enum"
+  "enumflags"
+  "class"
+  "accessor"
+  "get"
+  "set"
+  "inline"
 ] @keyword
 
-(simple_type) @type.builtin
+[
+  (storage_qualifier)
+  (parameter_qualifier)
+  (deprecated_attribute)
+  (access_specifier)
+] @keyword
+
+[
+  (simple_type)
+  (sized_type)
+] @type.builtin
+
+(type_identifier) @type
+
+(struct_specifier
+  name: (identifier) @type)
+
+(struct_specifier
+  parent: (identifier) @type)
+
+(class_specifier
+  name: (identifier) @type)
+
+(class_specifier
+  parent: (identifier) @type)
+
+(enum_specifier
+  name: (identifier) @type)
+
+(accessor_specifier
+  name: (identifier) @type)
+
+(scoped_identifier
+  scope: (identifier) @type)
 
 ; Operators and punctuation
 
 [
   "="
+  "+="
+  "-="
+  "*="
+  "/="
+  "%="
+  "|="
+  "&="
+  "&~="
+  "^="
+  "<<="
+  ">>="
+  "(+)"
+  "(-)"
   "=="
   "!="
   "<"
   ">"
   "<="
   ">="
+  "<=>"
   "+"
   "-"
   "*"
   "/"
+  "%"
   "&"
   "|"
+  "^"
+  "<<"
+  ">>"
+  "><"
   "&&"
   "||"
   "!"
+  "~"
+  "++"
+  "--"
+  "?"
+  "->"
 ] @operator
+
+(conditional_expression
+  ":" @operator)
 
 [
   "("
@@ -59,9 +139,14 @@
   ","
   ";"
   "."
+  "::"
+  ":"
 ] @punctuation.delimiter
 
-"..." @punctuation.special
+[
+  "..."
+  ".."
+] @punctuation.special
 
 (builtin
   "#" @punctuation.special)
@@ -73,7 +158,10 @@
 (vector_literal
   "'" @number)
 
-(string_literal) @string
+[
+  (string_literal)
+  (char_literal)
+] @string
 
 (escape_sequence) @string.special
 
@@ -83,6 +171,7 @@
   [
     "$"
     "frame"
+    "framesave"
   ] @keyword)
 
 (model_command
@@ -114,13 +203,27 @@
 (preproc_params
   (identifier) @variable.parameter)
 
+(macro_invocation
+  name: (identifier) @constant)
+
+(macro_invocation
+  name: (identifier) @function
+  arguments: (argument_list))
+
 ; Uses
 
 (field_expression
   field: (identifier) @property)
 
+(designated_initializer
+  member: (identifier) @property)
+
 (call_expression
   function: (identifier) @function)
+
+(call_expression
+  function: (scoped_identifier
+    name: (identifier) @function))
 
 (call_expression
   function: (field_expression
@@ -134,6 +237,12 @@
 (state
   next: (identifier) @function)
 
+(enumerator
+  name: (identifier) @constant)
+
+(accessor_member
+  name: (identifier) @property)
+
 (declaration
   type: (field_type)
   declarator: (declarator
@@ -143,6 +252,15 @@
   type: (function_type)
   declarator: (declarator
     name: (identifier) @function))
+
+(declarator
+  name: (identifier) @function
+  parameters: (parameter_list))
+
+(declarator
+  name: (scoped_identifier
+    name: (identifier) @function)
+  parameters: (parameter_list))
 
 (declaration
   type: (function_type)

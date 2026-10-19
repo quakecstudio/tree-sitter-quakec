@@ -1,0 +1,21 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright (C) 2026 QuakeC Studio contributors
+#
+# The codebases scripts/parse-corpus.sh parses: every .qc and .qh file under `directory` in
+# the source. Codebase ids are those of corpus/manifest.toml in quakecstudio/editor.
+# `strict` codebases must parse with no ERROR or MISSING node; a file of another codebase may
+# instead be listed in not-covered.tsv, with the construct this grammar does not cover.
+#
+# codebase	source	directory	strict
+id-1.01	quake-tools	qcc/v101qc	yes
+rerelease	quake-rerelease-qc	quakec	yes
+rerelease-hipnotic	quake-rerelease-qc	quakec_hipnotic	yes
+rerelease-rogue	quake-rerelease-qc	quakec_rogue	yes
+rerelease-mg1	quake-rerelease-qc	quakec_mg1	yes
+rerelease-ctf	quake-rerelease-qc	quakec_ctf	yes
+rerelease-mg3	quake-rerelease-qc	quakec_mg3	yes
+nuclide	nuclide	src	no
+freecs	freecs	src	no
+freehl	freehl	src	no
+copper	copper	.	no
+arcane-dimensions	arcane-dimensions	.	no
