@@ -1,0 +1,364 @@
+================================================================================
+QC-10.1: the simple types
+================================================================================
+
+void a;
+float b;
+vector c;
+string d;
+entity e;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (simple_type)
+    declarator: (declarator
+      name: (identifier)))
+  (declaration
+    type: (simple_type)
+    declarator: (declarator
+      name: (identifier)))
+  (declaration
+    type: (simple_type)
+    declarator: (declarator
+      name: (identifier)))
+  (declaration
+    type: (simple_type)
+    declarator: (declarator
+      name: (identifier)))
+  (declaration
+    type: (simple_type)
+    declarator: (declarator
+      name: (identifier))))
+
+================================================================================
+QC-10.2: field types nest, and a field may hold a function
+================================================================================
+
+.float health;
+..float ff;
+.void() th;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (field_type
+      type: (simple_type))
+    declarator: (declarator
+      name: (identifier)))
+  (declaration
+    type: (field_type
+      type: (field_type
+        type: (simple_type)))
+    declarator: (declarator
+      name: (identifier)))
+  (declaration
+    type: (field_type
+      type: (function_type
+        return_type: (simple_type)
+        parameters: (parameter_list)))
+    declarator: (declarator
+      name: (identifier))))
+
+================================================================================
+QC-10.3: function types with named parameters of any type
+================================================================================
+
+void(entity e, .float fl, void() cb, vector v) f;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (function_type
+      return_type: (simple_type)
+      parameters: (parameter_list
+        (parameter
+          type: (simple_type)
+          name: (identifier))
+        (parameter
+          type: (field_type
+            type: (simple_type))
+          name: (identifier))
+        (parameter
+          type: (function_type
+            return_type: (simple_type)
+            parameters: (parameter_list))
+          name: (identifier))
+        (parameter
+          type: (simple_type)
+          name: (identifier))))
+    declarator: (declarator
+      name: (identifier))))
+
+================================================================================
+QC-10.4: ... is a whole parameter list
+================================================================================
+
+void(...) dprint;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (function_type
+      return_type: (simple_type)
+      parameters: (parameter_list))
+    declarator: (declarator
+      name: (identifier))))
+
+================================================================================
+QC-10.4: ... after a parameter is an error
+:error
+================================================================================
+
+void(float a, ...) f;
+
+--------------------------------------------------------------------------------
+
+================================================================================
+QC-10.5: a function type cannot return a function
+:error
+================================================================================
+
+void()() f;
+
+--------------------------------------------------------------------------------
+
+================================================================================
+QC-10.3: a parameter needs a name
+:error
+================================================================================
+
+void(float) f;
+
+--------------------------------------------------------------------------------
+
+================================================================================
+QC-11.1: several names in one declaration, each with an optional initialiser
+================================================================================
+
+float a, b = 2, c;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (simple_type)
+    declarator: (declarator
+      name: (identifier))
+    declarator: (declarator
+      name: (identifier)
+      value: (float_literal))
+    declarator: (declarator
+      name: (identifier))))
+
+================================================================================
+QC-11.1: a stray semicolon at file level is an error
+:error
+================================================================================
+
+float a;;
+
+--------------------------------------------------------------------------------
+
+================================================================================
+QC-11.1: a statement at file level is an error
+:error
+================================================================================
+
+a = 1;
+
+--------------------------------------------------------------------------------
+
+================================================================================
+QC-11.2: function definitions in a list, each followed by , or ;
+================================================================================
+
+void() a = {}, b = {};
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (function_type
+      return_type: (simple_type)
+      parameters: (parameter_list))
+    declarator: (declarator
+      name: (identifier)
+      body: (function_body))
+    declarator: (declarator
+      name: (identifier)
+      body: (function_body))))
+
+================================================================================
+QC-11.2: the ; after a function body is required
+:error
+================================================================================
+
+void() f = {}
+float a;
+
+--------------------------------------------------------------------------------
+
+================================================================================
+QC-11.3: a global initialiser is a literal or a frame macro reference
+================================================================================
+
+$frame stand1
+float a = $stand1;
+string s = "x";
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (frame_definition
+    (frame_name))
+  (declaration
+    type: (simple_type)
+    declarator: (declarator
+      name: (identifier)
+      value: (frame_reference)))
+  (declaration
+    type: (simple_type)
+    declarator: (declarator
+      name: (identifier)
+      value: (string_literal
+        (string_content)))))
+
+================================================================================
+QC-27.8: an initialiser that is not a literal is an error
+:error
+================================================================================
+
+float x = y;
+
+--------------------------------------------------------------------------------
+
+================================================================================
+QC-11.10: local declarations share the declaration grammar
+================================================================================
+
+void() f = {
+  local float a, b = 5;
+  local vector v = '0 0 1';
+};
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (function_type
+      return_type: (simple_type)
+      parameters: (parameter_list))
+    declarator: (declarator
+      name: (identifier)
+      body: (function_body
+        (local_declaration
+          type: (simple_type)
+          declarator: (declarator
+            name: (identifier))
+          declarator: (declarator
+            name: (identifier)
+            value: (float_literal)))
+        (local_declaration
+          type: (simple_type)
+          declarator: (declarator
+            name: (identifier)
+            value: (vector_literal
+              x: (float_literal)
+              y: (float_literal)
+              z: (float_literal))))))))
+
+================================================================================
+QC-11.10: a local initialiser is a literal, never a function body
+:error
+================================================================================
+
+void() f = { local void() g = {}; };
+
+--------------------------------------------------------------------------------
+
+================================================================================
+QC-13.3: a builtin is # and its number
+================================================================================
+
+entity() spawn = #14;
+void(...) bprint = # 23;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (function_type
+      return_type: (simple_type)
+      parameters: (parameter_list))
+    declarator: (declarator
+      name: (identifier)
+      value: (builtin
+        number: (float_literal))))
+  (declaration
+    type: (function_type
+      return_type: (simple_type)
+      parameters: (parameter_list))
+    declarator: (declarator
+      name: (identifier)
+      value: (builtin
+        number: (float_literal)))))
+
+================================================================================
+QC-13.6: a state function: [frame, next] and its body
+================================================================================
+
+$frame s1 s2
+void() th2;
+void() th1 = [$s2, th2] { };
+void() th3 = [3, th1] { th2(); };
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (frame_definition
+    (frame_name)
+    (frame_name))
+  (declaration
+    type: (function_type
+      return_type: (simple_type)
+      parameters: (parameter_list))
+    declarator: (declarator
+      name: (identifier)))
+  (declaration
+    type: (function_type
+      return_type: (simple_type)
+      parameters: (parameter_list))
+    declarator: (declarator
+      name: (identifier)
+      state: (state
+        frame: (frame_reference)
+        next: (identifier))
+      body: (function_body)))
+  (declaration
+    type: (function_type
+      return_type: (simple_type)
+      parameters: (parameter_list))
+    declarator: (declarator
+      name: (identifier)
+      state: (state
+        frame: (float_literal)
+        next: (identifier))
+      body: (function_body
+        (expression_statement
+          (call_expression
+            function: (identifier)
+            arguments: (argument_list)))))))
+
+================================================================================
+QC-13.6: the state frame must be a number
+:error
+================================================================================
+
+void() th1 = [a, th2] { };
+
+--------------------------------------------------------------------------------

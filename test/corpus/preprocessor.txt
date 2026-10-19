@@ -1,0 +1,150 @@
+================================================================================
+QC-9.2: #include and a path
+================================================================================
+
+#include "defs.qh"
+float a;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (preproc_include
+    path: (string_literal
+      (string_content)))
+  (declaration
+    type: (simple_type)
+    declarator: (declarator
+      name: (identifier))))
+
+================================================================================
+QC-9.3: object-like and function-like macros
+================================================================================
+
+#define DEBUG
+#define LIMIT 16
+#define ADD(a, b) a + b
+float a;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (preproc_define
+    name: (identifier))
+  (preproc_define
+    name: (identifier)
+    value: (preproc_arg))
+  (preproc_define
+    name: (identifier)
+    parameters: (preproc_params
+      (identifier)
+      (identifier))
+    value: (preproc_arg))
+  (declaration
+    type: (simple_type)
+    declarator: (declarator
+      name: (identifier))))
+
+================================================================================
+QC-9.3: a ( after a blank starts the body, not a parameter list
+================================================================================
+
+#define PAREN (1)
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (preproc_define
+    name: (identifier)
+    value: (preproc_arg)))
+
+================================================================================
+QC-9.5, QC-9.6: #undef and conditional blocks, at file level and in a body
+================================================================================
+
+#ifdef DEBUG
+float a;
+#else
+float b;
+#endif
+#ifndef X
+#undef DEBUG
+#endif
+void() f = {
+#ifdef DEBUG
+  a = 1;
+#endif
+};
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (preproc_ifdef
+    name: (identifier))
+  (declaration
+    type: (simple_type)
+    declarator: (declarator
+      name: (identifier)))
+  (preproc_else)
+  (declaration
+    type: (simple_type)
+    declarator: (declarator
+      name: (identifier)))
+  (preproc_endif)
+  (preproc_ifdef
+    name: (identifier))
+  (preproc_undef
+    name: (identifier))
+  (preproc_endif)
+  (declaration
+    type: (function_type
+      return_type: (simple_type)
+      parameters: (parameter_list))
+    declarator: (declarator
+      name: (identifier)
+      body: (function_body
+        (preproc_ifdef
+          name: (identifier))
+        (expression_statement
+          (assignment_expression
+            left: (identifier)
+            right: (float_literal)))
+        (preproc_endif)))))
+
+================================================================================
+QC-9.1: blanks may stand between # and the directive name
+================================================================================
+
+#  define A 1
+# ifdef A
+#endif
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (preproc_define
+    name: (identifier)
+    value: (preproc_arg))
+  (preproc_ifdef
+    name: (identifier))
+  (preproc_endif))
+
+================================================================================
+QC-9.9: any other directive is kept as one line
+================================================================================
+
+#pragma noref 1
+#includes
+float a;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (preproc_call
+    directive: (preproc_directive)
+    argument: (preproc_arg))
+  (preproc_call
+    directive: (preproc_directive))
+  (declaration
+    type: (simple_type)
+    declarator: (declarator
+      name: (identifier))))

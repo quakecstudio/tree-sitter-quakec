@@ -1,0 +1,143 @@
+================================================================================
+QC-8.2: $frame names the words after it on the same line
+================================================================================
+
+$frame a b a
+$frame c	d
+float x;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (frame_definition
+    (frame_name)
+    (frame_name)
+    (frame_name))
+  (frame_definition
+    (frame_name)
+    (frame_name))
+  (declaration
+    type: (simple_type)
+    declarator: (declarator
+      name: (identifier))))
+
+================================================================================
+QC-8.2: a $frame line with trailing blanks, and one with no names
+================================================================================
+
+$frame a  	
+$frame
+float x;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (frame_definition
+    (frame_name))
+  (frame_definition)
+  (declaration
+    type: (simple_type)
+    declarator: (declarator
+      name: (identifier))))
+
+================================================================================
+QC-8.4: $cd, $origin, $base, $flags, $scale and $skin keep the rest of their line
+================================================================================
+
+$cd /raid/quake/id1/models/dog
+$origin 0 0 24
+$base base
+$skin skin
+$flags 8
+$scale 1
+float a;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (model_command
+    name: (identifier)
+    arguments: (command_arguments))
+  (model_command
+    name: (identifier)
+    arguments: (command_arguments))
+  (model_command
+    name: (identifier)
+    arguments: (command_arguments))
+  (model_command
+    name: (identifier)
+    arguments: (command_arguments))
+  (model_command
+    name: (identifier)
+    arguments: (command_arguments))
+  (model_command
+    name: (identifier)
+    arguments: (command_arguments))
+  (declaration
+    type: (simple_type)
+    declarator: (declarator
+      name: (identifier))))
+
+================================================================================
+QC-8.8: modelgen commands such as $modelname are kept as commands
+================================================================================
+
+$modelname progs/dog.mdl
+$framegroupstart
+float b;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (model_command
+    name: (identifier)
+    arguments: (command_arguments))
+  (model_command
+    name: (identifier))
+  (declaration
+    type: (simple_type)
+    declarator: (declarator
+      name: (identifier))))
+
+================================================================================
+QC-8.5: a frame macro reference stands where a float literal can
+================================================================================
+
+$frame a b
+void() f = { self.frame = $b; x = $a + 1; };
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (frame_definition
+    (frame_name)
+    (frame_name))
+  (declaration
+    type: (function_type
+      return_type: (simple_type)
+      parameters: (parameter_list))
+    declarator: (declarator
+      name: (identifier)
+      body: (function_body
+        (expression_statement
+          (assignment_expression
+            left: (field_expression
+              object: (identifier)
+              field: (identifier))
+            right: (frame_reference)))
+        (expression_statement
+          (assignment_expression
+            left: (identifier)
+            right: (binary_expression
+              left: (frame_reference)
+              right: (float_literal))))))))
+
+================================================================================
+QC-8.6: a reference runs to whitespace, , or ;, so ($b) is an error
+:error
+================================================================================
+
+$frame a b
+void() f = { x = ($b); };
+
+--------------------------------------------------------------------------------

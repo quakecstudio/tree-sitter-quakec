@@ -1,0 +1,156 @@
+================================================================================
+QC-14.1: blocks, return, while, do, local, if and expression statements
+================================================================================
+
+void() f = {
+  { a = 1; }
+  return;
+  return a;
+  while (a) a = a - 1;
+  do a = a + 1; while (a < 3);
+  if (a) b = 1; else b = 2;
+  a;
+};
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (function_type
+      return_type: (simple_type)
+      parameters: (parameter_list))
+    declarator: (declarator
+      name: (identifier)
+      body: (function_body
+        (block
+          (expression_statement
+            (assignment_expression
+              left: (identifier)
+              right: (float_literal))))
+        (return_statement)
+        (return_statement
+          value: (identifier))
+        (while_statement
+          condition: (identifier)
+          body: (expression_statement
+            (assignment_expression
+              left: (identifier)
+              right: (binary_expression
+                left: (identifier)
+                right: (float_literal)))))
+        (do_statement
+          body: (expression_statement
+            (assignment_expression
+              left: (identifier)
+              right: (binary_expression
+                left: (identifier)
+                right: (float_literal))))
+          condition: (binary_expression
+            left: (identifier)
+            right: (float_literal)))
+        (if_statement
+          condition: (identifier)
+          consequence: (expression_statement
+            (assignment_expression
+              left: (identifier)
+              right: (float_literal)))
+          alternative: (expression_statement
+            (assignment_expression
+              left: (identifier)
+              right: (float_literal))))
+        (expression_statement
+          (identifier))))))
+
+================================================================================
+QC-14.4: else binds to the nearest if
+================================================================================
+
+void() f = { if (a) if (b) c = 1; else c = 2; };
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (function_type
+      return_type: (simple_type)
+      parameters: (parameter_list))
+    declarator: (declarator
+      name: (identifier)
+      body: (function_body
+        (if_statement
+          condition: (identifier)
+          consequence: (if_statement
+            condition: (identifier)
+            consequence: (expression_statement
+              (assignment_expression
+                left: (identifier)
+                right: (float_literal)))
+            alternative: (expression_statement
+              (assignment_expression
+                left: (identifier)
+                right: (float_literal)))))))))
+
+================================================================================
+QC-14.2: an empty block inside a body is an error
+:error
+================================================================================
+
+void() f = { if (a) {} };
+
+--------------------------------------------------------------------------------
+
+================================================================================
+QC-14.2: there is no empty statement
+:error
+================================================================================
+
+void() f = { ; };
+
+--------------------------------------------------------------------------------
+
+================================================================================
+QC-14.6: the ; after do ... while (e) is required
+:error
+================================================================================
+
+void() f = { do a = 1; while (a) };
+
+--------------------------------------------------------------------------------
+
+================================================================================
+QC-14.7: the parentheses around a condition are required
+:error
+================================================================================
+
+void() f = { while a a = 1; };
+
+--------------------------------------------------------------------------------
+
+================================================================================
+QC-14.8: there is no for loop
+:error
+================================================================================
+
+void() f = { for (a = 0; a < 3; a = a + 1) b = a; };
+
+--------------------------------------------------------------------------------
+
+================================================================================
+QC-13.8: return takes any expression or none
+================================================================================
+
+float() f = { return "x"; };
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (function_type
+      return_type: (simple_type)
+      parameters: (parameter_list))
+    declarator: (declarator
+      name: (identifier)
+      body: (function_body
+        (return_statement
+          value: (string_literal
+            (string_content)))))))
