@@ -1,0 +1,4 @@
+# The generated parser, so reviews and language statistics skip it.
+/src/** linguist-generated
+# One corpus test holds CRLF line ends on purpose (QC-1.2); keep its bytes as written.
+/test/corpus/lexical.txt -text

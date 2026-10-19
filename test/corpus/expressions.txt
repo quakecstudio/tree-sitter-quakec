@@ -1,0 +1,379 @@
+================================================================================
+QC-15.1: * and / bind tighter than + and -, all left-associative
+================================================================================
+
+void() f = { a = b + c * a - b / c; };
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (function_type
+      return_type: (simple_type)
+      parameters: (parameter_list))
+    declarator: (declarator
+      name: (identifier)
+      body: (function_body
+        (expression_statement
+          (assignment_expression
+            left: (identifier)
+            right: (binary_expression
+              left: (binary_expression
+                left: (identifier)
+                right: (binary_expression
+                  left: (identifier)
+                  right: (identifier)))
+              right: (binary_expression
+                left: (identifier)
+                right: (identifier)))))))))
+
+================================================================================
+QC-15.2: & and | bind as tightly as *
+================================================================================
+
+void() f = { a = a + b & c | 4; };
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (function_type
+      return_type: (simple_type)
+      parameters: (parameter_list))
+    declarator: (declarator
+      name: (identifier)
+      body: (function_body
+        (expression_statement
+          (assignment_expression
+            left: (identifier)
+            right: (binary_expression
+              left: (identifier)
+              right: (binary_expression
+                left: (binary_expression
+                  left: (identifier)
+                  right: (identifier))
+                right: (float_literal)))))))))
+
+================================================================================
+QC-15.3: = binds tighter than && (a = b && c is (a = b) && c)
+================================================================================
+
+void() f = { a = b && c; };
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (function_type
+      return_type: (simple_type)
+      parameters: (parameter_list))
+    declarator: (declarator
+      name: (identifier)
+      body: (function_body
+        (expression_statement
+          (binary_expression
+            left: (assignment_expression
+              left: (identifier)
+              right: (identifier))
+            right: (identifier)))))))
+
+================================================================================
+QC-15.3: a && b = c is a && (b = c)
+================================================================================
+
+void() f = { a && b = c; };
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (function_type
+      return_type: (simple_type)
+      parameters: (parameter_list))
+    declarator: (declarator
+      name: (identifier)
+      body: (function_body
+        (expression_statement
+          (binary_expression
+            left: (identifier)
+            right: (assignment_expression
+              left: (identifier)
+              right: (identifier))))))))
+
+================================================================================
+QC-17.1: = is right-associative
+================================================================================
+
+void() f = { a = b = c; };
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (function_type
+      return_type: (simple_type)
+      parameters: (parameter_list))
+    declarator: (declarator
+      name: (identifier)
+      body: (function_body
+        (expression_statement
+          (assignment_expression
+            left: (identifier)
+            right: (assignment_expression
+              left: (identifier)
+              right: (identifier))))))))
+
+================================================================================
+QC-15.4: && and || share a priority and associate left
+================================================================================
+
+void() f = { a = (b || c && d); };
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (function_type
+      return_type: (simple_type)
+      parameters: (parameter_list))
+    declarator: (declarator
+      name: (identifier)
+      body: (function_body
+        (expression_statement
+          (assignment_expression
+            left: (identifier)
+            right: (parenthesized_expression
+              (binary_expression
+                left: (binary_expression
+                  left: (identifier)
+                  right: (identifier))
+                right: (identifier)))))))))
+
+================================================================================
+QC-15.5: comparisons associate left
+================================================================================
+
+void() f = { a = a == b == c; };
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (function_type
+      return_type: (simple_type)
+      parameters: (parameter_list))
+    declarator: (declarator
+      name: (identifier)
+      body: (function_body
+        (expression_statement
+          (assignment_expression
+            left: (identifier)
+            right: (binary_expression
+              left: (binary_expression
+                left: (identifier)
+                right: (identifier))
+              right: (identifier))))))))
+
+================================================================================
+QC-15.6: the operand of ! reaches down to the comparisons
+================================================================================
+
+void() f = { a = !b == c; a = !b + c; a = !b && c; };
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (function_type
+      return_type: (simple_type)
+      parameters: (parameter_list))
+    declarator: (declarator
+      name: (identifier)
+      body: (function_body
+        (expression_statement
+          (assignment_expression
+            left: (identifier)
+            right: (not_expression
+              operand: (binary_expression
+                left: (identifier)
+                right: (identifier)))))
+        (expression_statement
+          (assignment_expression
+            left: (identifier)
+            right: (not_expression
+              operand: (binary_expression
+                left: (identifier)
+                right: (identifier)))))
+        (expression_statement
+          (binary_expression
+            left: (assignment_expression
+              left: (identifier)
+              right: (not_expression
+                operand: (identifier)))
+            right: (identifier)))))))
+
+================================================================================
+QC-15.8: field access chains to the left
+================================================================================
+
+void() f = { a = e.en.hp; e.o_x = 1; };
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (function_type
+      return_type: (simple_type)
+      parameters: (parameter_list))
+    declarator: (declarator
+      name: (identifier)
+      body: (function_body
+        (expression_statement
+          (assignment_expression
+            left: (identifier)
+            right: (field_expression
+              object: (field_expression
+                object: (identifier)
+                field: (identifier))
+              field: (identifier))))
+        (expression_statement
+          (assignment_expression
+            left: (field_expression
+              object: (identifier)
+              field: (identifier))
+            right: (float_literal)))))))
+
+================================================================================
+QC-15.8: a call is not an operand of .
+:error
+================================================================================
+
+void() f = { a = g().fl; };
+
+--------------------------------------------------------------------------------
+
+================================================================================
+QC-15.8: a call cannot be called
+:error
+================================================================================
+
+void() f = { g()(); };
+
+--------------------------------------------------------------------------------
+
+================================================================================
+QC-18.1: calls with any number of arguments, nested calls included
+================================================================================
+
+void() f = { g(); a = g(4, h(1), "x", '1 2 3'); };
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (function_type
+      return_type: (simple_type)
+      parameters: (parameter_list))
+    declarator: (declarator
+      name: (identifier)
+      body: (function_body
+        (expression_statement
+          (call_expression
+            function: (identifier)
+            arguments: (argument_list)))
+        (expression_statement
+          (assignment_expression
+            left: (identifier)
+            right: (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (float_literal)
+                (call_expression
+                  function: (identifier)
+                  arguments: (argument_list
+                    (float_literal)))
+                (string_literal
+                  (string_content))
+                (vector_literal
+                  x: (float_literal)
+                  y: (float_literal)
+                  z: (float_literal))))))))))
+
+================================================================================
+QC-18.7: a call through a field
+================================================================================
+
+void() f = { self.th_stand(); };
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (function_type
+      return_type: (simple_type)
+      parameters: (parameter_list))
+    declarator: (declarator
+      name: (identifier)
+      body: (function_body
+        (expression_statement
+          (call_expression
+            function: (field_expression
+              object: (identifier)
+              field: (identifier))
+            arguments: (argument_list)))))))
+
+================================================================================
+QC-16.1: every binary operator
+================================================================================
+
+void() f = { a = (a * b) / (c & d) | e + f - g; a = a != b <= c >= d < e > f; a = (a || b); };
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (function_type
+      return_type: (simple_type)
+      parameters: (parameter_list))
+    declarator: (declarator
+      name: (identifier)
+      body: (function_body
+        (expression_statement
+          (assignment_expression
+            left: (identifier)
+            right: (binary_expression
+              left: (binary_expression
+                left: (binary_expression
+                  left: (binary_expression
+                    left: (parenthesized_expression
+                      (binary_expression
+                        left: (identifier)
+                        right: (identifier)))
+                    right: (parenthesized_expression
+                      (binary_expression
+                        left: (identifier)
+                        right: (identifier))))
+                  right: (identifier))
+                right: (identifier))
+              right: (identifier))))
+        (expression_statement
+          (assignment_expression
+            left: (identifier)
+            right: (binary_expression
+              left: (binary_expression
+                left: (binary_expression
+                  left: (binary_expression
+                    left: (binary_expression
+                      left: (identifier)
+                      right: (identifier))
+                    right: (identifier))
+                  right: (identifier))
+                right: (identifier))
+              right: (identifier))))
+        (expression_statement
+          (assignment_expression
+            left: (identifier)
+            right: (parenthesized_expression
+              (binary_expression
+                left: (identifier)
+                right: (identifier)))))))))

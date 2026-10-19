@@ -1,0 +1,39 @@
+{
+  "$schema": "https://tree-sitter.github.io/tree-sitter/assets/schemas/config.schema.json",
+  "grammars": [
+    {
+      "name": "quakec",
+      "camelcase": "QuakeC",
+      "title": "QuakeC",
+      "scope": "source.quakec",
+      "file-types": ["qc", "qh"],
+      "injection-regex": "^(quakec|qc)$",
+      "highlights": "queries/highlights.scm",
+      "locals": "queries/locals.scm",
+      "injections": "queries/injections.scm"
+    }
+  ],
+  "metadata": {
+    "version": "0.1.0",
+    "license": "GPL-3.0-or-later",
+    "description": "QuakeC grammar for tree-sitter",
+    "authors": [
+      {
+        "name": "QuakeC Studio contributors"
+      }
+    ],
+    "links": {
+      "repository": "https://github.com/quakecstudio/tree-sitter-quakec"
+    }
+  },
+  "bindings": {
+    "c": false,
+    "go": false,
+    "java": false,
+    "node": false,
+    "python": false,
+    "rust": false,
+    "swift": false,
+    "zig": false
+  }
+}

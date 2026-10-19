@@ -1,0 +1,41 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright (C) 2026 QuakeC Studio contributors
+#
+# Runs on every pull request and every merge-queue group. The job name is the status check
+# the default-branch ruleset can require, so it stays static.
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  merge_group:
+    types: [checks_requested]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions: {}
+
+jobs:
+  test:
+    name: tree-sitter test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install the pinned tree-sitter CLI
+        run: echo "TREE_SITTER=$(scripts/install-tree-sitter.sh)" >> "$GITHUB_ENV"
+      - name: Check that src/ is generated from grammar.js
+        run: |
+          "$TREE_SITTER" generate
+          git status --porcelain -- src
+          test -z "$(git status --porcelain -- src)"
+      - name: Run the corpus and highlight tests
+        run: '"$TREE_SITTER" test'
+      - name: Parse id's QuakeC 1.01 with no ERROR or MISSING node
+        run: scripts/parse-corpus.sh

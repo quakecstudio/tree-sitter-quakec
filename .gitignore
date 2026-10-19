@@ -1,0 +1,4 @@
+# The pinned tree-sitter CLI (scripts/install-tree-sitter.sh).
+/.tools/
+# tree-sitter parse --debug-graph output.
+/log.html
