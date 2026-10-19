@@ -1,0 +1,762 @@
+================================================================================
+FTEF-2.1: int and integer are types
+================================================================================
+
+int a;
+integer b;
+int(int x) f;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (simple_type)
+    declarator: (declarator
+      name: (identifier)))
+  (declaration
+    type: (simple_type)
+    declarator: (declarator
+      name: (identifier)))
+  (declaration
+    type: (function_type
+      return_type: (simple_type)
+      parameters: (parameter_list
+        (parameter
+          type: (simple_type)
+          name: (identifier))))
+    declarator: (declarator
+      name: (identifier))))
+
+================================================================================
+FTEF-2.2, FTEF-2.4: the C width and sign words in any order
+================================================================================
+
+unsigned int a;
+long long b;
+unsigned c;
+short int d;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (sized_type)
+    declarator: (declarator
+      name: (identifier)))
+  (declaration
+    type: (sized_type)
+    declarator: (declarator
+      name: (identifier)))
+  (declaration
+    type: (sized_type)
+    declarator: (declarator
+      name: (identifier)))
+  (declaration
+    type: (sized_type)
+    declarator: (declarator
+      name: (identifier))))
+
+================================================================================
+FTEF-2.3: double, char and _Bool; bool is a defined type
+================================================================================
+
+double a;
+char b;
+_Bool c;
+bool d;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (simple_type)
+    declarator: (declarator
+      name: (identifier)))
+  (declaration
+    type: (simple_type)
+    declarator: (declarator
+      name: (identifier)))
+  (declaration
+    type: (simple_type)
+    declarator: (declarator
+      name: (identifier)))
+  (declaration
+    type: (type_identifier)
+    declarator: (declarator
+      name: (identifier))))
+
+================================================================================
+FTEF-2.5: const and volatile qualify a declaration
+================================================================================
+
+const int a = 1;
+volatile float b;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    (storage_qualifier)
+    type: (simple_type)
+    declarator: (declarator
+      name: (identifier)
+      value: (float_literal)))
+  (declaration
+    (storage_qualifier)
+    type: (simple_type)
+    declarator: (declarator
+      name: (identifier))))
+
+================================================================================
+FTEF-3.1: typed numeric literals
+================================================================================
+
+int a = 12i;
+double b = 3.5d;
+float c = 1u + 2f + 3l + 4ll;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (simple_type)
+    declarator: (declarator
+      name: (identifier)
+      value: (float_literal)))
+  (declaration
+    type: (simple_type)
+    declarator: (declarator
+      name: (identifier)
+      value: (float_literal)))
+  (declaration
+    type: (simple_type)
+    declarator: (declarator
+      name: (identifier)
+      value: (binary_expression
+        left: (binary_expression
+          left: (binary_expression
+            left: (float_literal)
+            right: (float_literal))
+          right: (float_literal))
+        right: (float_literal)))))
+
+================================================================================
+FTEF-3.2: hexadecimal literals
+================================================================================
+
+int mask = 0xff;
+int neg = -0x10;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (simple_type)
+    declarator: (declarator
+      name: (identifier)
+      value: (float_literal)))
+  (declaration
+    type: (simple_type)
+    declarator: (declarator
+      name: (identifier)
+      value: (float_literal))))
+
+================================================================================
+FTEF-3.4: __NULL__ is a name the preprocessor defines
+================================================================================
+
+void() f = { e = __NULL__; };
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (function_type
+      return_type: (simple_type)
+      parameters: (parameter_list))
+    declarator: (declarator
+      name: (identifier)
+      body: (function_body
+        (expression_statement
+          (assignment_expression
+            left: (identifier)
+            right: (identifier)))))))
+
+================================================================================
+FTEF-4.1: pointer types and pointer casts
+================================================================================
+
+float *p;
+entity **q;
+void() f = { memfree((__variant *)p); };
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (pointer_type
+      type: (simple_type))
+    declarator: (declarator
+      name: (identifier)))
+  (declaration
+    type: (pointer_type
+      type: (pointer_type
+        type: (simple_type)))
+    declarator: (declarator
+      name: (identifier)))
+  (declaration
+    type: (function_type
+      return_type: (simple_type)
+      parameters: (parameter_list))
+    declarator: (declarator
+      name: (identifier)
+      body: (function_body
+        (expression_statement
+          (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (cast_expression
+                type: (pointer_type
+                  type: (simple_type))
+                value: (identifier)))))))))
+
+================================================================================
+FTEF-4.2: & takes an address
+================================================================================
+
+void() f = { TCP_Send(&tcp_irc, msg); };
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (function_type
+      return_type: (simple_type)
+      parameters: (parameter_list))
+    declarator: (declarator
+      name: (identifier)
+      body: (function_body
+        (expression_statement
+          (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (unary_expression
+                operand: (identifier))
+              (identifier))))))))
+
+================================================================================
+FTEF-4.3: -> selects a member through a pointer
+================================================================================
+
+void() f = { if (pl->health <= 0) return; };
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (function_type
+      return_type: (simple_type)
+      parameters: (parameter_list))
+    declarator: (declarator
+      name: (identifier)
+      body: (function_body
+        (if_statement
+          condition: (binary_expression
+            left: (field_expression
+              object: (identifier)
+              field: (identifier))
+            right: (float_literal))
+          consequence: (return_statement))))))
+
+================================================================================
+FTEF-4.4: * before a value dereferences it
+================================================================================
+
+void() f = { *p = 3; a = *p + 1; };
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (function_type
+      return_type: (simple_type)
+      parameters: (parameter_list))
+    declarator: (declarator
+      name: (identifier)
+      body: (function_body
+        (expression_statement
+          (assignment_expression
+            left: (unary_expression
+              operand: (identifier))
+            right: (float_literal)))
+        (expression_statement
+          (assignment_expression
+            left: (identifier)
+            right: (binary_expression
+              left: (unary_expression
+                operand: (identifier))
+              right: (float_literal))))))))
+
+================================================================================
+FTEF-5.1, FTEF-5.2: sized and multidimensional arrays
+================================================================================
+
+float randomseed[6];
+string grid[3][4];
+float shellqty[MAX_AMMOARRAY], nailqty[MAX_AMMOARRAY];
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (simple_type)
+    declarator: (declarator
+      name: (identifier)
+      (array_dimension
+        size: (float_literal))))
+  (declaration
+    type: (simple_type)
+    declarator: (declarator
+      name: (identifier)
+      (array_dimension
+        size: (float_literal))
+      (array_dimension
+        size: (float_literal))))
+  (declaration
+    type: (simple_type)
+    declarator: (declarator
+      name: (identifier)
+      (array_dimension
+        size: (identifier)))
+    declarator: (declarator
+      name: (identifier)
+      (array_dimension
+        size: (identifier)))))
+
+================================================================================
+FTEF-6.1: a named struct, and a forward declaration
+================================================================================
+
+struct node;
+struct node { float value; struct node *next; };
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (struct_specifier
+      name: (identifier)))
+  (declaration
+    type: (struct_specifier
+      name: (identifier)
+      body: (member_list
+        (declaration
+          type: (simple_type)
+          declarator: (declarator
+            name: (identifier)))
+        (declaration
+          type: (pointer_type
+            type: (struct_specifier
+              name: (identifier)))
+          declarator: (declarator
+            name: (identifier)))))))
+
+================================================================================
+FTEF-6.2: union
+================================================================================
+
+union value { float f; int i; };
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (struct_specifier
+      name: (identifier)
+      body: (member_list
+        (declaration
+          type: (simple_type)
+          declarator: (declarator
+            name: (identifier)))
+        (declaration
+          type: (simple_type)
+          declarator: (declarator
+            name: (identifier)))))))
+
+================================================================================
+FTEF-6.3: a struct inherits from a parent
+================================================================================
+
+struct child : node { float extra; };
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (struct_specifier
+      name: (identifier)
+      parent: (identifier)
+      body: (member_list
+        (declaration
+          type: (simple_type)
+          declarator: (declarator
+            name: (identifier)))))))
+
+================================================================================
+FTEF-6.4: a bitfield member
+================================================================================
+
+struct flags { int a : 3; int b : 5; };
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (struct_specifier
+      name: (identifier)
+      body: (member_list
+        (declaration
+          type: (simple_type)
+          declarator: (declarator
+            name: (identifier)
+            bits: (float_literal)))
+        (declaration
+          type: (simple_type)
+          declarator: (declarator
+            name: (identifier)
+            bits: (float_literal)))))))
+
+================================================================================
+FTEF-7.1, FTEF-7.2: typedef of a function type and a pointer type
+================================================================================
+
+typedef void(entity e) callback_t;
+typedef float *floatptr;
+callback_t cb;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    (storage_qualifier)
+    type: (function_type
+      return_type: (simple_type)
+      parameters: (parameter_list
+        (parameter
+          type: (simple_type)
+          name: (identifier))))
+    declarator: (declarator
+      name: (identifier)))
+  (declaration
+    (storage_qualifier)
+    type: (pointer_type
+      type: (simple_type))
+    declarator: (declarator
+      name: (identifier)))
+  (declaration
+    type: (type_identifier)
+    declarator: (declarator
+      name: (identifier))))
+
+================================================================================
+FTEF-8.1: enumflags
+================================================================================
+
+enumflags { VIEW_VISIBLE, VIEW_HIDDEN };
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (enum_specifier
+      body: (enumerator_list
+        (enumerator
+          name: (identifier))
+        (enumerator
+          name: (identifier))))))
+
+================================================================================
+FTEF-9.1: a class with a parent, and a forward declaration
+================================================================================
+
+class CWidget;
+class CDialog : CWidget
+{
+  float m_flAlpha;
+};
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (class_specifier
+      name: (identifier)))
+  (declaration
+    type: (class_specifier
+      name: (identifier)
+      parent: (identifier)
+      body: (member_list
+        (declaration
+          type: (simple_type)
+          declarator: (declarator
+            name: (identifier)))))))
+
+================================================================================
+FTEF-9.2, FTEF-9.3: member functions with qualifiers, and access labels
+================================================================================
+
+class ncEntity
+{
+public:
+  void ncEntity(void);
+  virtual void Spawned(void);
+  nonvirtual float GetHealth(void);
+  static void Precache(void);
+
+private:
+  float m_flHealth;
+};
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (class_specifier
+      name: (identifier)
+      body: (member_list
+        (access_specifier)
+        (declaration
+          type: (simple_type)
+          declarator: (declarator
+            name: (identifier)
+            parameters: (parameter_list
+              (parameter
+                type: (simple_type)))))
+        (declaration
+          (storage_qualifier)
+          type: (simple_type)
+          declarator: (declarator
+            name: (identifier)
+            parameters: (parameter_list
+              (parameter
+                type: (simple_type)))))
+        (declaration
+          (storage_qualifier)
+          type: (simple_type)
+          declarator: (declarator
+            name: (identifier)
+            parameters: (parameter_list
+              (parameter
+                type: (simple_type)))))
+        (declaration
+          (storage_qualifier)
+          type: (simple_type)
+          declarator: (declarator
+            name: (identifier)
+            parameters: (parameter_list
+              (parameter
+                type: (simple_type)))))
+        (access_specifier)
+        (declaration
+          type: (simple_type)
+          declarator: (declarator
+            name: (identifier)))))))
+
+================================================================================
+FTEF-9.2: virtual: sets the default for the members after it
+================================================================================
+
+class a
+{
+virtual:
+  void() think;
+};
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (class_specifier
+      name: (identifier)
+      body: (member_list
+        (access_specifier)
+        (declaration
+          type: (function_type
+            return_type: (simple_type)
+            parameters: (parameter_list))
+          declarator: (declarator
+            name: (identifier)))))))
+
+================================================================================
+FTEF-9.4: a member function defined outside its class
+================================================================================
+
+void
+ncEntity::Spawned(void)
+{
+  super::Spawned();
+  this.m_flHealth = 100;
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (simple_type)
+    declarator: (declarator
+      name: (scoped_identifier
+        scope: (identifier)
+        name: (identifier))
+      parameters: (parameter_list
+        (parameter
+          type: (simple_type)))
+      body: (function_body
+        (expression_statement
+          (call_expression
+            function: (scoped_identifier
+              scope: (identifier)
+              name: (identifier))
+            arguments: (argument_list)))
+        (expression_statement
+          (assignment_expression
+            left: (field_expression
+              object: (identifier)
+              field: (identifier))
+            right: (float_literal)))))))
+
+================================================================================
+FTEF-9.4: a constructor defined with no return type
+================================================================================
+
+ncEntity::ncEntity(void)
+{
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    declarator: (declarator
+      name: (scoped_identifier
+        scope: (identifier)
+        name: (identifier))
+      parameters: (parameter_list
+        (parameter
+          type: (simple_type)))
+      body: (function_body))))
+
+================================================================================
+FTEF-10.1: an accessor declares a handle type
+================================================================================
+
+accessor strbuf : float;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (accessor_specifier
+      name: (identifier)
+      base: (simple_type))))
+
+================================================================================
+FTEF-10.2: get and set members, indexed and inline
+================================================================================
+
+accessor strbuf : float
+{
+  inline get float asfloat[float idx] = {return stof(bufstr_get(this, idx));};
+  get string[float] = bufstr_get;
+  set string[float] = bufstr_set;
+  get float length = buf_getsize;
+};
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (accessor_specifier
+      name: (identifier)
+      base: (simple_type)
+      body: (member_list
+        (accessor_member
+          type: (simple_type)
+          name: (identifier)
+          index: (simple_type)
+          index_name: (identifier)
+          body: (function_body
+            (return_statement
+              value: (call_expression
+                function: (identifier)
+                arguments: (argument_list
+                  (call_expression
+                    function: (identifier)
+                    arguments: (argument_list
+                      (identifier)
+                      (identifier))))))))
+        (accessor_member
+          type: (simple_type)
+          index: (simple_type)
+          value: (identifier))
+        (accessor_member
+          type: (simple_type)
+          index: (simple_type)
+          value: (identifier))
+        (accessor_member
+          type: (simple_type)
+          name: (identifier)
+          value: (identifier))))))
+
+================================================================================
+FTEF-11.1: __variant and __variant *
+================================================================================
+
+__variant(int, float) Updates_GetInfo;
+void(__variant *ptr) memfree = #385;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (function_type
+      return_type: (simple_type)
+      parameters: (parameter_list
+        (parameter
+          type: (simple_type))
+        (parameter
+          type: (simple_type))))
+    declarator: (declarator
+      name: (identifier)))
+  (declaration
+    type: (function_type
+      return_type: (simple_type)
+      parameters: (parameter_list
+        (parameter
+          type: (pointer_type
+            type: (simple_type))
+          name: (identifier))))
+    declarator: (declarator
+      name: (identifier)
+      value: (builtin
+        number: (float_literal)))))
+
+================================================================================
+FTEF-12.1, FTEF-12.2, FTEF-12.6: #pragma target, progs_dat and noref
+================================================================================
+
+#pragma target fte_5768
+#pragma PROGS_DAT  "../../progs/deathmatch.dat"
+#pragma noref 1
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (preproc_call
+    directive: (preproc_directive)
+    argument: (preproc_arg))
+  (preproc_call
+    directive: (preproc_directive)
+    argument: (preproc_arg))
+  (preproc_call
+    directive: (preproc_directive)
+    argument: (preproc_arg)))

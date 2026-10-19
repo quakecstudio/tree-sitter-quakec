@@ -1,0 +1,241 @@
+================================================================================
+QC-9.1: a directive is a line wherever it stands, between an if and its else too
+================================================================================
+
+void() f = {
+  if (a)
+  {
+    b = 1;
+  }
+#ifndef NO_CSQC
+  else
+  {
+    b = 2;
+  }
+#endif
+};
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (function_type
+      return_type: (simple_type)
+      parameters: (parameter_list))
+    declarator: (declarator
+      name: (identifier)
+      body: (function_body
+        (if_statement
+          condition: (identifier)
+          consequence: (block
+            (expression_statement
+              (assignment_expression
+                left: (identifier)
+                right: (float_literal))))
+          (preproc_ifdef
+            name: (identifier))
+          alternative: (block
+            (expression_statement
+              (assignment_expression
+                left: (identifier)
+                right: (float_literal)))))
+        (preproc_endif)))))
+
+================================================================================
+QC-9.1: directives among enumerators, initialisers and class members
+================================================================================
+
+enum {
+  A,
+#ifdef X
+  B,
+#endif
+  C
+};
+string list[] = {
+  "a",
+#if defined(COVERTOPS)
+  "b",
+#endif
+};
+class c
+{
+#ifdef SERVER
+  float a;
+#endif
+};
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (enum_specifier
+      body: (enumerator_list
+        (enumerator
+          name: (identifier))
+        (preproc_ifdef
+          name: (identifier))
+        (enumerator
+          name: (identifier))
+        (preproc_endif)
+        (enumerator
+          name: (identifier)))))
+  (declaration
+    type: (simple_type)
+    declarator: (declarator
+      name: (identifier)
+      (array_dimension)
+      value: (initializer_list
+        (string_literal
+          (string_content))
+        (preproc_call
+          directive: (preproc_directive)
+          argument: (preproc_arg))
+        (string_literal
+          (string_content))
+        (preproc_endif))))
+  (declaration
+    type: (class_specifier
+      name: (identifier)
+      body: (member_list
+        (preproc_ifdef
+          name: (identifier))
+        (declaration
+          type: (simple_type)
+          declarator: (declarator
+            name: (identifier)))
+        (preproc_endif)))))
+
+================================================================================
+FTEQCC QCC_PR_SkipToEndOfLine: a directive continues past an escaped line break
+================================================================================
+
+#define TWO(a) \
+  a + a
+float b;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (preproc_define
+    name: (identifier)
+    parameters: (preproc_params
+      (identifier))
+    value: (preproc_arg))
+  (declaration
+    type: (simple_type)
+    declarator: (declarator
+      name: (identifier))))
+
+================================================================================
+FTEQCC QCC_PR_LexPunctuation: a \ before a line break is skipped
+================================================================================
+
+void() f = { g(a, \
+  b); };
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (function_type
+      return_type: (simple_type)
+      parameters: (parameter_list))
+    declarator: (declarator
+      name: (identifier)
+      body: (function_body
+        (expression_statement
+          (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (identifier)
+              (identifier))))))))
+
+================================================================================
+Leniency: a name or a call with no ; is a macro invocation
+================================================================================
+
+void() f = {
+  INHIBIT_COOP
+  if (a) b = 1;
+  SAVE_STATE(origin)
+};
+CLASSEXPORT(item_sodacan, item_food)
+class d
+{
+  PREDICTED_FLOAT(m_flSize)
+  float m_flMaxSize;
+};
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (function_type
+      return_type: (simple_type)
+      parameters: (parameter_list))
+    declarator: (declarator
+      name: (identifier)
+      body: (function_body
+        (macro_invocation
+          name: (identifier))
+        (if_statement
+          condition: (identifier)
+          consequence: (expression_statement
+            (assignment_expression
+              left: (identifier)
+              right: (float_literal))))
+        (macro_invocation
+          name: (identifier)
+          arguments: (argument_list
+            (identifier))))))
+  (macro_invocation
+    name: (identifier)
+    arguments: (argument_list
+      (identifier)
+      (identifier)))
+  (declaration
+    type: (class_specifier
+      name: (identifier)
+      body: (member_list
+        (macro_invocation
+          name: (identifier)
+          arguments: (argument_list
+            (identifier)))
+        (declaration
+          type: (simple_type)
+          declarator: (declarator
+            name: (identifier)))))))
+
+================================================================================
+Leniency: a macro invocation is never the body of an if
+================================================================================
+
+void() f = { if (a) b(); else if (c) d(); else e(); };
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (function_type
+      return_type: (simple_type)
+      parameters: (parameter_list))
+    declarator: (declarator
+      name: (identifier)
+      body: (function_body
+        (if_statement
+          condition: (identifier)
+          consequence: (expression_statement
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list)))
+          alternative: (if_statement
+            condition: (identifier)
+            consequence: (expression_statement
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list)))
+            alternative: (expression_statement
+              (call_expression
+                function: (identifier)
+                arguments: (argument_list)))))))))

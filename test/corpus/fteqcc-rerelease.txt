@@ -1,0 +1,1102 @@
+================================================================================
+FTE-2.1: for (init; cond; step) body, and every part may be empty
+================================================================================
+
+void() f = {
+  for (i = 0; i < 3; i = i + 1) a = a + i;
+  for (;;) { break; }
+};
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (function_type
+      return_type: (simple_type)
+      parameters: (parameter_list))
+    declarator: (declarator
+      name: (identifier)
+      body: (function_body
+        (for_statement
+          initializer: (assignment_expression
+            left: (identifier)
+            right: (float_literal))
+          condition: (binary_expression
+            left: (identifier)
+            right: (float_literal))
+          update: (assignment_expression
+            left: (identifier)
+            right: (binary_expression
+              left: (identifier)
+              right: (float_literal)))
+          body: (expression_statement
+            (assignment_expression
+              left: (identifier)
+              right: (binary_expression
+                left: (identifier)
+                right: (identifier)))))
+        (for_statement
+          body: (block
+            (break_statement)))))))
+
+================================================================================
+FTE-2.2: the init of a for may declare a local
+================================================================================
+
+void() f = { for (float i = 0; i < poses.length; i++) g(i); };
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (function_type
+      return_type: (simple_type)
+      parameters: (parameter_list))
+    declarator: (declarator
+      name: (identifier)
+      body: (function_body
+        (for_statement
+          initializer: (declaration
+            type: (simple_type)
+            declarator: (declarator
+              name: (identifier)
+              value: (float_literal)))
+          condition: (binary_expression
+            left: (identifier)
+            right: (field_expression
+              object: (identifier)
+              field: (identifier)))
+          update: (update_expression
+            operand: (identifier))
+          body: (expression_statement
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (identifier)))))))))
+
+================================================================================
+FTE-3.1: switch selects among case labels and default
+================================================================================
+
+void() f = {
+  switch (x)
+  {
+    case IT_KEY1:
+      a = 1;
+      break;
+    default:
+      a = 2;
+  }
+};
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (function_type
+      return_type: (simple_type)
+      parameters: (parameter_list))
+    declarator: (declarator
+      name: (identifier)
+      body: (function_body
+        (switch_statement
+          condition: (identifier)
+          body: (block
+            (case_statement
+              value: (identifier))
+            (expression_statement
+              (assignment_expression
+                left: (identifier)
+                right: (float_literal)))
+            (break_statement)
+            (case_statement)
+            (expression_statement
+              (assignment_expression
+                left: (identifier)
+                right: (float_literal)))))))))
+
+================================================================================
+FTE-3.3: a case body may be a block
+================================================================================
+
+void() f = { switch (x) { case IT_KEY1: { return "key"; } } };
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (function_type
+      return_type: (simple_type)
+      parameters: (parameter_list))
+    declarator: (declarator
+      name: (identifier)
+      body: (function_body
+        (switch_statement
+          condition: (identifier)
+          body: (block
+            (case_statement
+              value: (identifier))
+            (block
+              (return_statement
+                value: (string_literal
+                  (string_content))))))))))
+
+================================================================================
+FTE-4.1: break and continue are statements
+================================================================================
+
+void() f = { while (1) { if (a) continue; break; } };
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (function_type
+      return_type: (simple_type)
+      parameters: (parameter_list))
+    declarator: (declarator
+      name: (identifier)
+      body: (function_body
+        (while_statement
+          condition: (float_literal)
+          body: (block
+            (if_statement
+              condition: (identifier)
+              consequence: (continue_statement))
+            (break_statement)))))))
+
+================================================================================
+FTE-4: break as a builtin name stays a declaration
+================================================================================
+
+void() break = #6;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (function_type
+      return_type: (simple_type)
+      parameters: (parameter_list))
+    declarator: (declarator
+      name: (identifier)
+      value: (builtin
+        number: (float_literal)))))
+
+================================================================================
+FTE-5.1: postfix ++ and --
+================================================================================
+
+void() f = { i++; self.count--; };
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (function_type
+      return_type: (simple_type)
+      parameters: (parameter_list))
+    declarator: (declarator
+      name: (identifier)
+      body: (function_body
+        (expression_statement
+          (update_expression
+            operand: (identifier)))
+        (expression_statement
+          (update_expression
+            operand: (field_expression
+              object: (identifier)
+              field: (identifier))))))))
+
+================================================================================
+FTE-6.1: the compound assignments
+================================================================================
+
+void() f = { ang_x *= -1; start += offset; num/= 2; a -= 1; };
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (function_type
+      return_type: (simple_type)
+      parameters: (parameter_list))
+    declarator: (declarator
+      name: (identifier)
+      body: (function_body
+        (expression_statement
+          (assignment_expression
+            left: (identifier)
+            right: (float_literal)))
+        (expression_statement
+          (assignment_expression
+            left: (identifier)
+            right: (identifier)))
+        (expression_statement
+          (assignment_expression
+            left: (identifier)
+            right: (float_literal)))
+        (expression_statement
+          (assignment_expression
+            left: (identifier)
+            right: (float_literal)))))))
+
+================================================================================
+FTE-7.1: % binds like *
+================================================================================
+
+void() f = { a = self.wave % 3 + 1; };
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (function_type
+      return_type: (simple_type)
+      parameters: (parameter_list))
+    declarator: (declarator
+      name: (identifier)
+      body: (function_body
+        (expression_statement
+          (assignment_expression
+            left: (identifier)
+            right: (binary_expression
+              left: (binary_expression
+                left: (field_expression
+                  object: (identifier)
+                  field: (identifier))
+                right: (float_literal))
+              right: (float_literal))))))))
+
+================================================================================
+FTE-8.1: the conditional operator, nested
+================================================================================
+
+void() f = { a = b ? c : d ? e : g; };
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (function_type
+      return_type: (simple_type)
+      parameters: (parameter_list))
+    declarator: (declarator
+      name: (identifier)
+      body: (function_body
+        (expression_statement
+          (assignment_expression
+            left: (identifier)
+            right: (conditional_expression
+              condition: (identifier)
+              consequence: (identifier)
+              alternative: (conditional_expression
+                condition: (identifier)
+                consequence: (identifier)
+                alternative: (identifier)))))))))
+
+================================================================================
+FTE-8.1: = and ?: share a priority, so a = b ? c : d assigns the choice
+================================================================================
+
+void() f = { a = b ? c : d; };
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (function_type
+      return_type: (simple_type)
+      parameters: (parameter_list))
+    declarator: (declarator
+      name: (identifier)
+      body: (function_body
+        (expression_statement
+          (assignment_expression
+            left: (identifier)
+            right: (conditional_expression
+              condition: (identifier)
+              consequence: (identifier)
+              alternative: (identifier))))))))
+
+================================================================================
+FTE-9.1: .x, .y and .z on a vector, as an lvalue
+================================================================================
+
+void() f = { offset.z *= -1; };
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (function_type
+      return_type: (simple_type)
+      parameters: (parameter_list))
+    declarator: (declarator
+      name: (identifier)
+      body: (function_body
+        (expression_statement
+          (assignment_expression
+            left: (field_expression
+              object: (identifier)
+              field: (identifier))
+            right: (float_literal)))))))
+
+================================================================================
+FTE-10.1: const declarations
+================================================================================
+
+const float NO_INTERMISSION = 1;
+const string version_s = "Copper";
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    (storage_qualifier)
+    type: (simple_type)
+    declarator: (declarator
+      name: (identifier)
+      value: (float_literal)))
+  (declaration
+    (storage_qualifier)
+    type: (simple_type)
+    declarator: (declarator
+      name: (identifier)
+      value: (string_literal
+        (string_content)))))
+
+================================================================================
+FTE-10.2: a const initialised from another constant
+================================================================================
+
+const float LightStyles_MAX = LightStyles.length - 1;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    (storage_qualifier)
+    type: (simple_type)
+    declarator: (declarator
+      name: (identifier)
+      value: (binary_expression
+        left: (field_expression
+          object: (identifier)
+          field: (identifier))
+        right: (float_literal)))))
+
+================================================================================
+FTE-11.1: var declarations
+================================================================================
+
+var float num_players = 0;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    (storage_qualifier)
+    type: (simple_type)
+    declarator: (declarator
+      name: (identifier)
+      value: (float_literal))))
+
+================================================================================
+FTE-12.1: the nosave qualifier
+================================================================================
+
+nosave float load_flag;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    (storage_qualifier)
+    type: (simple_type)
+    declarator: (declarator
+      name: (identifier))))
+
+================================================================================
+FTE-13.1: arrays with an inferred size and a brace initialiser
+================================================================================
+
+const string LightStyles[] = {"a", "b", "c"};
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    (storage_qualifier)
+    type: (simple_type)
+    declarator: (declarator
+      name: (identifier)
+      (array_dimension)
+      value: (initializer_list
+        (string_literal
+          (string_content))
+        (string_literal
+          (string_content))
+        (string_literal
+          (string_content))))))
+
+================================================================================
+FTE-13.2, FTE-13.3: subscripts and .length
+================================================================================
+
+void() f = { setmodel(self, poses[self.style].mdl); n = poses.length; };
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (function_type
+      return_type: (simple_type)
+      parameters: (parameter_list))
+    declarator: (declarator
+      name: (identifier)
+      body: (function_body
+        (expression_statement
+          (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (identifier)
+              (field_expression
+                object: (subscript_expression
+                  object: (identifier)
+                  index: (field_expression
+                    object: (identifier)
+                    field: (identifier)))
+                field: (identifier)))))
+        (expression_statement
+          (assignment_expression
+            left: (identifier)
+            right: (field_expression
+              object: (identifier)
+              field: (identifier))))))))
+
+================================================================================
+FTE-14.1, FTE-14.3: typedef struct, and an array of structs
+================================================================================
+
+typedef struct { string mdl; float frame; } poseInfo;
+poseInfo poses[] = { { "progs/a.mdl", 1 }, { "progs/b.mdl", 2 } };
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    (storage_qualifier)
+    type: (struct_specifier
+      body: (member_list
+        (declaration
+          type: (simple_type)
+          declarator: (declarator
+            name: (identifier)))
+        (declaration
+          type: (simple_type)
+          declarator: (declarator
+            name: (identifier)))))
+    declarator: (declarator
+      name: (identifier)))
+  (declaration
+    type: (type_identifier)
+    declarator: (declarator
+      name: (identifier)
+      (array_dimension)
+      value: (initializer_list
+        (initializer_list
+          (string_literal
+            (string_content))
+          (float_literal))
+        (initializer_list
+          (string_literal
+            (string_content))
+          (float_literal))))))
+
+================================================================================
+FTE-15.1, FTE-15.2: bare enums, explicit values, and the typed forms
+================================================================================
+
+enum { A, B = 4, C };
+enum : int { D, E, };
+enum class Upgrade : int { None, Fast };
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (enum_specifier
+      body: (enumerator_list
+        (enumerator
+          name: (identifier))
+        (enumerator
+          name: (identifier)
+          value: (float_literal))
+        (enumerator
+          name: (identifier)))))
+  (declaration
+    type: (enum_specifier
+      base: (simple_type)
+      body: (enumerator_list
+        (enumerator
+          name: (identifier))
+        (enumerator
+          name: (identifier)))))
+  (declaration
+    type: (enum_specifier
+      name: (identifier)
+      base: (simple_type)
+      body: (enumerator_list
+        (enumerator
+          name: (identifier))
+        (enumerator
+          name: (identifier))))))
+
+================================================================================
+FTE-16.1: #pragma warning around a block
+================================================================================
+
+#pragma warning disable F317
+float a;
+#pragma warning enable F317
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (preproc_call
+    directive: (preproc_directive)
+    argument: (preproc_arg))
+  (declaration
+    type: (simple_type)
+    declarator: (declarator
+      name: (identifier)))
+  (preproc_call
+    directive: (preproc_directive)
+    argument: (preproc_arg)))
+
+================================================================================
+FTE-17.1, FTE-17.2: a C-style function definition, with or without =
+================================================================================
+
+void Bot_PreThink(float a) { a = 1; }
+float CanTakedamage(entity e) = { return e.takedamage > 0; }
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (simple_type)
+    declarator: (declarator
+      name: (identifier)
+      parameters: (parameter_list
+        (parameter
+          type: (simple_type)
+          name: (identifier)))
+      body: (function_body
+        (expression_statement
+          (assignment_expression
+            left: (identifier)
+            right: (float_literal))))))
+  (declaration
+    type: (simple_type)
+    declarator: (declarator
+      name: (identifier)
+      parameters: (parameter_list
+        (parameter
+          type: (simple_type)
+          name: (identifier)))
+      body: (function_body
+        (return_statement
+          value: (binary_expression
+            left: (field_expression
+              object: (identifier)
+              field: (identifier))
+            right: (float_literal)))))))
+
+================================================================================
+FTE-17.3, FTE-21.3: the ; after a definition may be left out
+================================================================================
+
+void() f = {}
+float a
+float b;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (function_type
+      return_type: (simple_type)
+      parameters: (parameter_list))
+    declarator: (declarator
+      name: (identifier)
+      body: (function_body)))
+  (declaration
+    type: (simple_type)
+    declarator: (declarator
+      name: (identifier)))
+  (declaration
+    type: (simple_type)
+    declarator: (declarator
+      name: (identifier))))
+
+================================================================================
+FTE-17.3: a ; before a definition is skipped
+================================================================================
+
+float a;;
+;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (simple_type)
+    declarator: (declarator
+      name: (identifier)))
+  (empty_declaration)
+  (empty_declaration))
+
+================================================================================
+FTE-21.1, FTE-21.2: a declaration in a body without local, a field local included
+================================================================================
+
+void() f = {
+  float damage = 40;
+  entity e, t = spawn();
+  .float fl;
+};
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (function_type
+      return_type: (simple_type)
+      parameters: (parameter_list))
+    declarator: (declarator
+      name: (identifier)
+      body: (function_body
+        (declaration
+          type: (simple_type)
+          declarator: (declarator
+            name: (identifier)
+            value: (float_literal)))
+        (declaration
+          type: (simple_type)
+          declarator: (declarator
+            name: (identifier))
+          declarator: (declarator
+            name: (identifier)
+            value: (call_expression
+              function: (identifier)
+              arguments: (argument_list))))
+        (declaration
+          type: (field_type
+            type: (simple_type))
+          declarator: (declarator
+            name: (identifier)))))))
+
+================================================================================
+FTE-21.1: a local's initialiser is any expression
+================================================================================
+
+void() f = { local entity timer = spawn(); };
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (function_type
+      return_type: (simple_type)
+      parameters: (parameter_list))
+    declarator: (declarator
+      name: (identifier)
+      body: (function_body
+        (local_declaration
+          type: (simple_type)
+          declarator: (declarator
+            name: (identifier)
+            value: (call_expression
+              function: (identifier)
+              arguments: (argument_list))))))))
+
+================================================================================
+FTE-19.4: unary minus and plus take a term
+================================================================================
+
+void() f = { a = -b; c = -self.x * 2; d = +e; };
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (function_type
+      return_type: (simple_type)
+      parameters: (parameter_list))
+    declarator: (declarator
+      name: (identifier)
+      body: (function_body
+        (expression_statement
+          (assignment_expression
+            left: (identifier)
+            right: (unary_expression
+              operand: (identifier))))
+        (expression_statement
+          (assignment_expression
+            left: (identifier)
+            right: (binary_expression
+              left: (unary_expression
+                operand: (field_expression
+                  object: (identifier)
+                  field: (identifier)))
+              right: (float_literal))))
+        (expression_statement
+          (assignment_expression
+            left: (identifier)
+            right: (unary_expression
+              operand: (identifier))))))))
+
+================================================================================
+FTE-20.1: a number may start with a dot
+================================================================================
+
+void() f = { a = .5; };
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (function_type
+      return_type: (simple_type)
+      parameters: (parameter_list))
+    declarator: (declarator
+      name: (identifier)
+      body: (function_body
+        (expression_statement
+          (assignment_expression
+            left: (identifier)
+            right: (float_literal)))))))
+
+================================================================================
+FTE-21.4, FTE-21.5: an empty block and an empty statement
+================================================================================
+
+void() f = { if (a) {} ; };
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (function_type
+      return_type: (simple_type)
+      parameters: (parameter_list))
+    declarator: (declarator
+      name: (identifier)
+      body: (function_body
+        (if_statement
+          condition: (identifier)
+          consequence: (block))
+        (empty_statement)))))
+
+================================================================================
+FTE-19.1, FTE-19.2: (+) is |=, (-) is &~=
+================================================================================
+
+void() f = { e.items (-) IT_QUAD; e.effects (+) EF_DIMLIGHT; e.flags &~= FL_ONGROUND; };
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (function_type
+      return_type: (simple_type)
+      parameters: (parameter_list))
+    declarator: (declarator
+      name: (identifier)
+      body: (function_body
+        (expression_statement
+          (assignment_expression
+            left: (field_expression
+              object: (identifier)
+              field: (identifier))
+            right: (identifier)))
+        (expression_statement
+          (assignment_expression
+            left: (field_expression
+              object: (identifier)
+              field: (identifier))
+            right: (identifier)))
+        (expression_statement
+          (assignment_expression
+            left: (field_expression
+              object: (identifier)
+              field: (identifier))
+            right: (identifier)))))))
+
+================================================================================
+FTE-19.3: ^, << and >> bind like *
+================================================================================
+
+void() f = { a = b ^ c << 1 >> 2 + d; };
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (function_type
+      return_type: (simple_type)
+      parameters: (parameter_list))
+    declarator: (declarator
+      name: (identifier)
+      body: (function_body
+        (expression_statement
+          (assignment_expression
+            left: (identifier)
+            right: (binary_expression
+              left: (binary_expression
+                left: (binary_expression
+                  left: (binary_expression
+                    left: (identifier)
+                    right: (identifier))
+                  right: (float_literal))
+                right: (float_literal))
+              right: (identifier))))))))
+
+================================================================================
+FTE-19.6, FTE-18.2: casts to a function type and to a named type
+================================================================================
+
+void() f = { th = (float(entity e))SUB_True; pl = (ncPlayer)self.owner; };
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (function_type
+      return_type: (simple_type)
+      parameters: (parameter_list))
+    declarator: (declarator
+      name: (identifier)
+      body: (function_body
+        (expression_statement
+          (assignment_expression
+            left: (identifier)
+            right: (cast_expression
+              type: (function_type
+                return_type: (simple_type)
+                parameters: (parameter_list
+                  (parameter
+                    type: (simple_type)
+                    name: (identifier))))
+              value: (identifier))))
+        (expression_statement
+          (assignment_expression
+            left: (identifier)
+            right: (cast_expression
+              type: (type_identifier)
+              value: (field_expression
+                object: (identifier)
+                field: (identifier)))))))))
+
+================================================================================
+FTE-17.4: a builtin by number and name
+================================================================================
+
+float(__variant funcref) checkbuiltin = #0:checkbuiltin;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (function_type
+      return_type: (simple_type)
+      parameters: (parameter_list
+        (parameter
+          type: (simple_type)
+          name: (identifier))))
+    declarator: (declarator
+      name: (identifier)
+      value: (builtin
+        number: (float_literal)
+        name: (identifier)))))
+
+================================================================================
+FTE-15.4, FTE-18.3: a named enum is a type, and a parameter may have it
+================================================================================
+
+enum UpgradeType { None, Fast };
+float GetUpgradeAmount(UpgradeType Type) = { return 0; };
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (enum_specifier
+      name: (identifier)
+      body: (enumerator_list
+        (enumerator
+          name: (identifier))
+        (enumerator
+          name: (identifier)))))
+  (declaration
+    type: (simple_type)
+    declarator: (declarator
+      name: (identifier)
+      parameters: (parameter_list
+        (parameter
+          type: (type_identifier)
+          name: (identifier)))
+      body: (function_body
+        (return_statement
+          value: (float_literal))))))
+
+================================================================================
+FTE-18.1: ... may end a list after named parameters
+================================================================================
+
+void(string s, ...) bprint = #0:ex_bprint;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (function_type
+      return_type: (simple_type)
+      parameters: (parameter_list
+        (parameter
+          type: (simple_type)
+          name: (identifier))))
+    declarator: (declarator
+      name: (identifier)
+      value: (builtin
+        number: (float_literal)
+        name: (identifier)))))
+
+================================================================================
+FTE-18.2: a parameter may have a default value
+================================================================================
+
+void(float(entity e) predicate = (float(entity e))SUB_True, float n = 5) find_all;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (function_type
+      return_type: (simple_type)
+      parameters: (parameter_list
+        (parameter
+          type: (function_type
+            return_type: (simple_type)
+            parameters: (parameter_list
+              (parameter
+                type: (simple_type)
+                name: (identifier))))
+          name: (identifier)
+          default: (cast_expression
+            type: (function_type
+              return_type: (simple_type)
+              parameters: (parameter_list
+                (parameter
+                  type: (simple_type)
+                  name: (identifier))))
+            value: (identifier)))
+        (parameter
+          type: (simple_type)
+          name: (identifier)
+          default: (float_literal))))
+    declarator: (declarator
+      name: (identifier))))
+
+================================================================================
+FTE-19.4: ~ takes the operand of !
+================================================================================
+
+void() f = { self.flags = self.flags & ~FL_ONGROUND; };
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (function_type
+      return_type: (simple_type)
+      parameters: (parameter_list))
+    declarator: (declarator
+      name: (identifier)
+      body: (function_body
+        (expression_statement
+          (assignment_expression
+            left: (field_expression
+              object: (identifier)
+              field: (identifier))
+            right: (binary_expression
+              left: (field_expression
+                object: (identifier)
+                field: (identifier))
+              right: (not_expression
+                operand: (identifier)))))))))
+
+================================================================================
+FTE-19.5: a negative number where an operator belongs is a subtraction
+================================================================================
+
+void() f = { self.count = self.count -1; };
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (function_type
+      return_type: (simple_type)
+      parameters: (parameter_list))
+    declarator: (declarator
+      name: (identifier)
+      body: (function_body
+        (expression_statement
+          (assignment_expression
+            left: (field_expression
+              object: (identifier)
+              field: (identifier))
+            right: (binary_expression
+              left: (field_expression
+                object: (identifier)
+                field: (identifier))
+              right: (float_literal))))))))
+
+================================================================================
+FTE-20.2: the float suffix f
+================================================================================
+
+float a = 1.0f;
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (simple_type)
+    declarator: (declarator
+      name: (identifier)
+      value: (float_literal))))
+
+================================================================================
+FTE-20.3: the one-byte escapes
+================================================================================
+
+string s = "a\tb\\c\'";
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (declaration
+    type: (simple_type)
+    declarator: (declarator
+      name: (identifier)
+      value: (string_literal
+        (string_content)
+        (escape_sequence)
+        (string_content)
+        (escape_sequence)
+        (string_content)
+        (escape_sequence)))))
