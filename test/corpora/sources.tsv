@@ -1,0 +1,15 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright (C) 2026 QuakeC Studio contributors
+#
+# The repositories scripts/parse-corpus.sh fetches, at the commits quakecstudio/editor pins in
+# corpus/manifest.toml. `members` lists the paths taken from the archive (`.` for all of it);
+# <id>.sha256 pins every file the check reads, license files included. Nothing is committed.
+#
+# id	repository	commit	members
+quake-tools	id-Software/Quake-Tools	c0d1b91c74eb654365ac7755bc837e497caaca73	qcc/COPYING qcc/v101qc
+quake-rerelease-qc	id-Software/quake-rerelease-qc	634eefab09a77eb7b5f5ca7078ba3d8784a91142	COPYING.txt quakec quakec_hipnotic quakec_rogue quakec_mg1 quakec_ctf quakec_mg3
+nuclide	VeraVisions/nuclide	03ea0bdc43471a05032cb1bc35803c146e225df0	COPYING src
+freecs	eukara/freecs	79893de18d34e9f55cbf4877283145e63bfab5f1	COPYING src
+freehl	eukara/freehl	041a3fdcafec26e0bdde595e9b8f76caacbfd1fe	COPYING src
+copper	itslunaranyo/copper	68f6a69ca94ff1f5e9ad30b0cddbe87face743c6	.
+arcane-dimensions	SimsOCallaghan/ArcaneDimensions	320f1cec4545563e70027450f2d6d4f08f527c69	.

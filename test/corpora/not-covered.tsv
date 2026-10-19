@@ -1,0 +1,13 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright (C) 2026 QuakeC Studio contributors
+#
+# Files of the non-strict codebases (codebases.tsv) that parse with an ERROR or MISSING node,
+# and why. scripts/parse-corpus.sh fails if any other file has one, or if a file listed here
+# parses cleanly, so the list stays exact. README.md, "Not covered", explains each construct.
+#
+# source	path	construct
+nuclide	src/shared/game/Actor.qc	#ifdef branches that each open a block
+nuclide	src/shared/game/Attack.qc	#ifdef branches that each open a block
+nuclide	src/shared/physics/pmove_custom.qc	#ifdef branches that each open a block
+nuclide	src/gs-entbase/shared/env_fire.qc	a macro call missing its (
+nuclide	src/shared/environment/propdata.qc	a doubled =

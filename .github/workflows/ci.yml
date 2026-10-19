@@ -37,5 +37,5 @@ jobs:
           test -z "$(git status --porcelain -- src)"
       - name: Run the corpus and highlight tests
         run: '"$TREE_SITTER" test'
-      - name: Parse id's QuakeC 1.01 with no ERROR or MISSING node
+      - name: Parse id 1.01, the rerelease and the FTEQCC corpus mods
         run: scripts/parse-corpus.sh
