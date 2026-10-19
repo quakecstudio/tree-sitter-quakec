@@ -10,14 +10,14 @@ LANG-5).
 One grammar covers vanilla QuakeC and the FTEQCC dialect. A highlighter cannot know which
 compiler a file is written for, so where FTEQCC accepts what id's `qcc` rejects, the grammar
 accepts it. The rules follow three specifications in the editor repository at commit
-[`9b41dae`](https://github.com/quakecstudio/editor/tree/9b41dae1a22a90cef5b92d50c9d0658d400419f3/docs/spec):
+[`a17432a`](https://github.com/quakecstudio/editor/tree/a17432a69d1369ad2182f458d7653f431a43c2bc/docs/spec):
 
-- [`language.md`](https://github.com/quakecstudio/editor/blob/9b41dae1a22a90cef5b92d50c9d0658d400419f3/docs/spec/language.md)
+- [`language.md`](https://github.com/quakecstudio/editor/blob/a17432a69d1369ad2182f458d7653f431a43c2bc/docs/spec/language.md)
   (prefix `QC`): the language id's `qcc` accepts, from id-Software/Quake-Tools at commit
   `c0d1b91c74eb654365ac7755bc837e497caaca73`.
-- [`dialect-fteqcc-rerelease.md`](https://github.com/quakecstudio/editor/blob/9b41dae1a22a90cef5b92d50c9d0658d400419f3/docs/spec/dialect-fteqcc-rerelease.md)
+- [`dialect-fteqcc-rerelease.md`](https://github.com/quakecstudio/editor/blob/a17432a69d1369ad2182f458d7653f431a43c2bc/docs/spec/dialect-fteqcc-rerelease.md)
   (prefix `FTE`): the FTEQCC features the Quake rerelease uses.
-- [`dialect-fteqcc.md`](https://github.com/quakecstudio/editor/blob/9b41dae1a22a90cef5b92d50c9d0658d400419f3/docs/spec/dialect-fteqcc.md)
+- [`dialect-fteqcc.md`](https://github.com/quakecstudio/editor/blob/a17432a69d1369ad2182f458d7653f431a43c2bc/docs/spec/dialect-fteqcc.md)
   (prefix `FTEF`): the rest of FTEQCC that the FTEQCC corpus mods use.
 
 Both dialect specifications are written from FTEQCC at
