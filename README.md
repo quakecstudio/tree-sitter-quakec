@@ -51,7 +51,7 @@ take a term.
 The corpus uses some FTEQCC constructs that no statement in the three specifications names
 yet. The grammar follows FTEQCC's source for them, and each test in
 `test/corpus/fteqcc-unspecified.txt` is titled with the FTEQCC function it follows. Adding
-their statements to the editor's specifications is plan item P2-35.
+their statements to the editor's specifications is plan item P2-36.
 
 - Any expression as a global initialiser (`float IT_ALL = IT_AXE | IT_SHOTGUN;`) and a function
   body inside a function body (`QCC_PR_ParseInitializerType`).
